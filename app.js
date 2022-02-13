@@ -123,6 +123,31 @@ let PostShow = {
                 <p> Post Title : ${post.title} </p>
                 <p> Post Content : ${post.content} </p>
                 <p> Post Author : ${post.name} </p>
+                <button class="button is-primary" id="edit_btn">
+                        Edit
+                </button>
+            </section>
+        `
+    }
+    , after_render: async () => {
+    }
+}
+
+let Edit = {
+
+    render : async () => {
+        let request = Utils.parseRequestURL()
+        let post = await getPost(request.id)
+        
+        return /*html*/`
+            <section class="section">
+                <h1> Post Id : ${post.id}</h1>
+                <p> Post Title : ${post.title} </p>
+                <p> Post Content : ${post.content} </p>
+                <p> Post Author : ${post.name} </p>
+                <button class="button is-primary" id="login_btn">
+                        Log in
+                </button>
             </section>
         `
     }

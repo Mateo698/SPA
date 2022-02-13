@@ -123,13 +123,16 @@ let PostShow = {
                 <p> Post Title : ${post.title} </p>
                 <p> Post Content : ${post.content} </p>
                 <p> Post Author : ${post.name} </p>
-                <button class="button is-primary" id="edit_btn">
+                <button class="button is-primary" id="edit_btn" href="#/edit/${post.id}">
                         Edit
                 </button>
             </section>
         `
     }
     , after_render: async () => {
+        let request = Utils.parseRequestURL();
+        let post = await getPost(request.id);
+        console.log(post.title);
     }
 }
 
@@ -141,17 +144,37 @@ let Edit = {
         
         return /*html*/`
             <section class="section">
-                <h1> Post Id : ${post.id}</h1>
-                <p> Post Title : ${post.title} </p>
-                <p> Post Content : ${post.content} </p>
-                <p> Post Author : ${post.name} </p>
-                <button class="button is-primary" id="login_btn">
-                        Log in
-                </button>
-            </section>
+            <div class="field">
+            <p class="control has-icons-left has-icons-right">
+                <input class="input" id="post_id" type="text" placeholder="ID">
+            </p>
+             </div>
+             <div class="field">
+             <p class="control has-icons-left has-icons-right">
+                 <input class="input" id="post_title" type="text" placeholder="Title">
+             </p>
+              </div>
+              <div class="field">
+            <p class="control has-icons-left has-icons-right">
+                <input class="input" id="post_content" type="text" placeholder="Content">
+            </p>
+             </div>
+             <div class="field">
+            <p class="control has-icons-left has-icons-right">
+                <input class="input" id="post_name" type="text" placeholder="Name">
+            </p>
+             </div>
+
+            <button class="button is-primary" id="edit_btn">
+                 Edit
+            </button>
         `
     }
     , after_render: async () => {
+        document.getElementById("post_id").value = post.id;
+        document.getElementById("post_title").value = post.title;
+        document.getElementById("post_content").value = post.content;
+        document.getElementById("post_name").value = post.name;
     }
 }
 
@@ -331,6 +354,7 @@ const routes = {
     , '/p/:id'      : PostShow
     , '/register'   : Register
     , '/login'      : Login
+    , '/edit/:id'   : Edit
 };
 
 

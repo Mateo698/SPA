@@ -133,6 +133,10 @@ let PostShow = {
         let request = Utils.parseRequestURL();
         let post = await getPost(request.id);
         console.log(post.title);
+        document.getElementById("post_id").value = post.id;
+        document.getElementById("post_title").value = post.title;
+        document.getElementById("post_content").value = post.content;
+        document.getElementById("post_name").value = post.name;
     }
 }
 

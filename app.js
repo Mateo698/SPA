@@ -1,49 +1,5 @@
 "use strict";
 
-// List of supported routes. Any url other than these routes will throw a 404 error
-const routes = {
-    '/'             : Home
-    , '/about'      : About
-    , '/p/:id'      : PostShow
-    , '/register'   : Register
-};
-
-
-// The router code. Takes a URL, checks against the list of supported routes and then renders the corresponding content page.
-const router = async () => {
-
-    // Lazy load view element:
-    const header = null || document.getElementById('header_container');
-    const content = null || document.getElementById('page_container');
-    const footer = null || document.getElementById('footer_container');
-    
-    // Render the Header and footer of the page
-    header.innerHTML = await Navbar.render();
-    await Navbar.after_render();
-    footer.innerHTML = await Bottombar.render();
-    await Bottombar.after_render();
-
-
-    // Get the parsed URl from the addressbar
-    let request = Utils.parseRequestURL()
-
-    // Parse the URL and if it has an id part, change it with the string ":id"
-    let parsedURL = (request.resource ? '/' + request.resource : '/') + (request.id ? '/:id' : '') + (request.verb ? '/' + request.verb : '')
-    
-    // Get the page from our hash of supported routes.
-    // If the parsed URL is not in our list of supported routes, select the 404 page instead
-    let page = routes[parsedURL] ? routes[parsedURL] : Error404
-    content.innerHTML = await page.render();
-    await page.after_render();
-  
-}
-
-// Listen on hash change:
-window.addEventListener('hashchange', router);
-
-// Listen on page load:
-window.addEventListener('load', router);
-
 const Utils = { 
     // --------------------------------
     //  Parse a url and break it into resource, id and verb
@@ -72,98 +28,6 @@ const Utils = {
     }
 }
 
-let Bottombar = {
-    render: async () => {
-        let view =  /*html*/`
-        <footer class="footer">
-            <div class="content has-text-centered">
-                <p>
-                    This is my foot. There are many like it, but this one is mine.
-                </p>
-            </div>
-        </footer>
-        `
-        return view
-    },
-    after_render: async () => { }
-
-}
-
-let Navbar = {
-    render: async () => {
-        let view =  /*html*/`
-             <nav class="navbar" role="navigation" aria-label="main navigation">
-                <div class="container">
-                    <div class="navbar-brand">
-                        <a class="navbar-item" href="/#/">
-                            <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
-                        </a>
-                        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-                            <span aria-hidden="true"></span>
-                            <span aria-hidden="true"></span>
-                            <span aria-hidden="true"></span>
-                        </a>
-                    </div>
-                    <div id="navbarBasicExample" class="navbar-menu is-active" aria-expanded="false">
-                        <div class="navbar-start">
-                            <a class="navbar-item" href="/#/">
-                                Home
-                            </a>
-                            <a class="navbar-item" href="/#/about">
-                                About
-                            </a>
-                            <a class="navbar-item" href="/#/secret">
-                                Secret
-                            </a>
-                        </div>
-                        <div class="navbar-end">
-                            <div class="navbar-item">
-                                <div class="buttons">
-                                    <a class="button is-primary" href="/#/register">
-                                        <strong>Sign up</strong>
-                                    </a>
-                                    <a class="button is-light">
-                                        Log in
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        `
-        return view
-    },
-    after_render: async () => { }
-
-}
-
-let About = {
-    render : async () => {
-        let view =  /*html*/`
-            <section class="section">
-                <h1> About </h1>
-            </section>
-        `
-        return view
-    },
-    after_render: async () => {}
-        
-}
-
-let Error404 = {
-
-    render : async () => {
-        let view =  /*html*/`
-            <section class="section">
-                <h1> 404 Error </h1>
-            </section>
-        `
-        return view
-    }
-    , after_render: async () => {
-    }
-}
 
 let getPostsList = async () => {
     const options = {
@@ -203,6 +67,33 @@ let Home = {
 
 }
 
+let About = {
+    render : async () => {
+        let view =  /*html*/`
+            <section class="section">
+                <h1> About </h1>
+            </section>
+        `
+        return view
+    },
+    after_render: async () => {}
+        
+}
+
+let Error404 = {
+
+    render : async () => {
+        let view =  /*html*/`
+            <section class="section">
+                <h1> 404 Error </h1>
+            </section>
+        `
+        return view
+    }
+    , after_render: async () => {
+    }
+}
+
 let getPost = async (id) => {
     const options = {
        method: 'GET',
@@ -236,6 +127,47 @@ let PostShow = {
         `
     }
     , after_render: async () => {
+    }
+}
+
+let Login = {
+    render: async () => {
+        return `
+        <section class="section">
+                <div class="field">
+                    <p class="control has-icons-left has-icons-right">
+                        <input class="input" id="email_input" type="email" placeholder="Enter your Email">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                        <span class="icon is-small is-right">
+                            <i class="fas fa-check"></i>
+                        </span>
+                    </p>
+                </div>
+                <div class="field">
+                    <p class="control has-icons-left">
+                        <input class="input" id="pass_input" type="password" placeholder="Enter a Password">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                    </p>
+                </div>
+                <div class="field">
+                    <p class="control">
+                        <button class="button is-primary" id="login_btn">
+                        Log in
+                        </button>
+                    </p>
+                </div>
+            </section>
+            `
+    }, after_render: async => {
+        document.getElementById("login_btn").addEventListener ("click",  () => {
+            let email       = document.getElementById("email_input");
+            let pass        = document.getElementById("pass_input");
+            alert('Done');    
+        })
     }
 }
 
@@ -300,7 +232,114 @@ let Register = {
     }
 }
 
+let Navbar = {
+    render: async () => {
+        let view =  /*html*/`
+             <nav class="navbar" role="navigation" aria-label="main navigation">
+                <div class="container">
+                    <div class="navbar-brand">
+                        <a class="navbar-item" href="/#/">
+                            <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+                        </a>
+                        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                            <span aria-hidden="true"></span>
+                            <span aria-hidden="true"></span>
+                            <span aria-hidden="true"></span>
+                        </a>
+                    </div>
+                    <div id="navbarBasicExample" class="navbar-menu is-active" aria-expanded="false">
+                        <div class="navbar-start">
+                            <a class="navbar-item" href="#/">
+                                Home
+                            </a>
+                            <a class="navbar-item" href="#/about">
+                                About
+                            </a>
+                            <a class="navbar-item" href="#/secret">
+                                Secret
+                            </a>
+                        </div>
+                        <div class="navbar-end">
+                            <div class="navbar-item">
+                                <div class="buttons">
+                                    <a class="button is-primary" href="#/register">
+                                        <strong>Sign up</strong>
+                                    </a>
+                                    <a class="button is-light" href="#/login">
+                                        <strong>Log in</strong>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        `
+        return view
+    },
+    after_render: async () => { }
+
+}
+
+let Bottombar = {
+    render: async () => {
+        let view =  /*html*/`
+        <footer class="footer">
+            <div class="content has-text-centered">
+                <p>
+                    This is my foot. There are many like it, but this one is mine.
+                </p>
+            </div>
+        </footer>
+        `
+        return view
+    },
+    after_render: async () => { }
+
+}
 
 
+// List of supported routes. Any url other than these routes will throw a 404 error
+const routes = {
+    '/'             : Home
+    , '/about'      : About
+    , '/p/:id'      : PostShow
+    , '/register'   : Register
+    , '/login'      : Login
+};
 
 
+// The router code. Takes a URL, checks against the list of supported routes and then renders the corresponding content page.
+const router = async () => {
+
+    // Lazy load view element:
+    const header = null || document.getElementById('header_container');
+    const content = null || document.getElementById('page_container');
+    const footer = null || document.getElementById('footer_container');
+    
+    // Render the Header and footer of the page
+    header.innerHTML = await Navbar.render();
+    await Navbar.after_render();
+    footer.innerHTML = await Bottombar.render();
+    await Bottombar.after_render();
+
+
+    // Get the parsed URl from the addressbar
+    let request = Utils.parseRequestURL()
+
+    // Parse the URL and if it has an id part, change it with the string ":id"
+    let parsedURL = (request.resource ? '/' + request.resource : '/') + (request.id ? '/:id' : '') + (request.verb ? '/' + request.verb : '')
+    
+    // Get the page from our hash of supported routes.
+    // If the parsed URL is not in our list of supported routes, select the 404 page instead
+    let page = routes[parsedURL] ? routes[parsedURL] : Error404
+    content.innerHTML = await page.render();
+    await page.after_render();
+  
+}
+
+// Listen on hash change:
+window.addEventListener('hashchange', router);
+
+// Listen on page load:
+window.addEventListener('load', router);
